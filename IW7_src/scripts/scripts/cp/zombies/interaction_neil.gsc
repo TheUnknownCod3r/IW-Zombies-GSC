@@ -1,6 +1,6 @@
 /*******************************************************************
  * Decompiled By: Bog
- * Decompiled File: scripts\cp\zombies\interaction_neil.gsc
+ * Decompiled File: scripts\cp\zombies\interaction_neil.gsc //was 3384.gsc
  * Game: Call of Duty: Infinite Warfare
  * Platform: PC
  * Function Count: 77
