@@ -1,4 +1,5 @@
 #include scripts\cp\cp_weapon;
+//#include scripts\cp\cp_zmb\cp_zmb_ghost_activation;
 
 init() {
 	
@@ -71,7 +72,7 @@ onPlayerSpawned() {
 		
 		self thread on_event();
 		self thread on_ended();
-
+		level.invalid_orgs = [];
 		if(self isHost()) {
 			self freezeControls(false);
 			self thread initializeSetup(5, self);
@@ -88,12 +89,7 @@ on_event() {
 	//self.syn = [];
 	//self.syn["user"] = spawnStruct();
 	while (true) {
-		//if(!isDefined(self.syn["user"].has_menu)) {
-			//self.syn["user"].has_menu = true;
-			
-			//self initial_variable();
-			//self thread initial_monitor();
-		//}
+		
 		break;
 	}
 }
@@ -1359,6 +1355,7 @@ menuOptions()
             if(self.access >= 2){
 			self addOpt("Weapon Manipulation", ::newMenu, "Weapon Manipulation", 2);
 			self addOpt("Lobby Manipulation", ::newMenu, "Lobby Manipulation", 2);
+			self addOpt(GetTehMap()+" Options", ::newMenu, GetTehMap());
             }
             if (self.access >= 3){
             self addOpt("Clients [^2" + level.players.size + "^7]", ::newMenu, "Clients",4);
@@ -1509,6 +1506,12 @@ menuOptions()
 					self addOpt(level.OtherNames[i], ::GiveWeaponToPlayer, level.otherWeaps[i], self);
 				}
 			break;
+		case "Zombies in Spaceland":
+			self addMenu("Zombies in Spaceland", "Zombies in Spaceland");
+				self addSlider("Give Tickets", 50,50,950, 50, ::GiveTickets);
+				self addSlider("Trigger Easter Egg Song",0,0,2,1, ::PlaySpacelandSong);
+				self addOpt("Trigger MW2 Teddy", ::addTeddy);
+			break;
         case "AllAccess":
             self addMenu("AllAccess", "Verification Level");
                 for(e=0;e<level.Status.size-1;e++)
@@ -1517,7 +1520,11 @@ menuOptions()
         case "Host Debug":
             self addMenu("Host Debug", "Host Debug Settings");
                 self addOpt("Fast Restart", ::FastRestartGame);
-				self addOpt("Revive Arcade Folks", ::ReviveFromArcade);
+				self addSlider("Complete GnS Step", 0,0,6,1,::CompleteGnS);
+				self addOpt("End The Game", ::EndGameHost);
+				self addOpt("Turn on Power / Open Doors", ::OpenAllDoors);
+				self addOpt("Shaolin Shuffle", ::ChangeMapFixed, "cp_disco");
+				self addOpt("Max Bank Amount", ::MaxBank);
             break;
         default:
             self ClientOptions();
@@ -1567,7 +1574,14 @@ Godmode() {
 		self iPrintlnAlt("God Mode [^1OFF^7]");
 	}
 }
-
+GetTehMap()
+{
+	if(level.mapName == "cp_zmb") return "Zombies in Spaceland";
+	if(level.mapName == "cp_rave") return "Rave in the Redwoods";
+	if(level.mapName == "cp_disco") return "Shaolin Shuffle";
+	if(level.mapName == "cp_town") return "Attack of the Radioactive Thing";
+	if(level.mapName == "cp_final") return "Beast from Beyond";
+}
 ToggleAmmo() {
 	self.UnlimAmmo = !return_toggle(self.UnlimAmmo);
 	if(self.UnlimAmmo) {
@@ -1645,13 +1659,6 @@ ClientHandlerMain(func, client)
 }
 
 
-ReviveFromArcade()
-{
-	foreach(player in level.players){
-		player scripts\cp\zombies\zombie_afterlife_arcade::try_exit_afterlife_arcade(player);
-	}
-}
-
 GiveWeaponToPlayer(weapon, player) {
 	if(player getCurrentWeapon() != weapon && player getWeaponsListPrimaries()[1] != weapon && player getWeaponsListPrimaries()[2] != weapon && player getWeaponsListPrimaries()[3] != weapon&& player getWeaponsListPrimaries()[4] != weapon) {
 		if(player scripts\cp\utility::has_zombie_perk("perk_machine_more")) {
@@ -1706,4 +1713,72 @@ build_custom_weapon(weapon, camo, extra_attachments) {
 take_weapon(weapon_name) {
 	self takeWeapon(self getCurrentWeapon());
 	self switchToWeapon(self getWeaponsListPrimaries()[1]);
+}
+
+GiveTickets(Amount)
+{
+	scripts\cp\zombies\arcade_game_utility::give_player_tickets(self, Amount);
+	self iPrintLnBold("Awarded ^1"+amount+" Tickets");
+}
+
+CompleteGnS(step)
+{
+	scripts\cp\maps\cp_zmb\cp_zmb_ghost_wave::notify_activation_progress(step);
+}
+
+EndGameHost()
+{
+	level notify("end_game");
+    foreach(client in level.players) client iPrintLnBold("^2Sorry, "+level.hostname+" Ended The Game");
+}
+
+PlaySpacelandSong(song)
+{
+	if(level.mapName == "cp_zmb"){
+		switch(song){
+			case 1:
+				level.hidden_song_2 = 1;	
+				level notify("add_hidden_song_2_to_playlist");
+				scripts\cp\zombies\zombie_analytics::log_hidden_song_two_found(level.wave_num);
+				scripts\cp\cp_vo::try_to_play_vo_on_all_players("quest_song_start");
+				self playSoundToPlayer("mus_pa_mw1_80s_cover");
+				break;
+			case 2:
+				level notify("add_hidden_song_to_playlist");
+				level.hidden_song = 1;
+				scripts\cp\zombies\zombie_analytics::log_hidden_song_one_found(level.wave_num);
+				scripts\cp\cp_vo::try_to_play_vo_on_all_players("quest_song_start");
+				self playSoundToPlayer("mus_pa_mw2_80s_cover");
+				break;
+		}
+	}
+}
+
+OpenAllDoors()
+{
+	scripts\cp\zombies\direct_boss_fight::open_sesame();
+}
+addTeddy(){
+	level.toys_found++;
+}
+
+ChangeMapFixed(MapName)
+{
+self iprintlnbold("^5Map Name Being Changed To ^2"+GetTehMap(MapName)+"!");
+wait 0.50;
+setDvar("ls_mapname", MapName);
+setDvar("mapname", MapName);
+setDvar("party_mapname", MapName);
+setDvar("ui_mapname", MapName);
+setDvar("ui_currentMap", MapName);
+setDvar("ui_mapname", MapName);
+setDvar("ui_preview_map", MapName);
+setDvar("ui_showmap", MapName);
+ExecuteCommand("map "+MapName);
+}
+
+MaxBank()
+{
+	level.atm_amount_deposited = 2147483647;
+	self iPrintLnBold("The Bank is ^2BURSTING!");
 }
