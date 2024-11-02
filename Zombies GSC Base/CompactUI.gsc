@@ -1,9 +1,44 @@
+#include scripts\cp\cp_weapon;
+
 init() {
 	
 	level.Status        = ["^1Unverified", "^3Verified", "^4VIP", "^6Admin", "^5Co-Host", "^2Host"];
     level.RGB           = ["Red", "Green", "Blue"];
     level.patchName     = "Synergy V3";
     level.creatorName   = "TheUnknownCoder";
+	level.WeaponCategories = ["Assault Rifles", "Sub Machine Guns", "Light Machine Guns", "Sniper Rifles", "Shotguns", "Pistols", "Launchers", "Classic Weapons", "Melee Weapons", "Specialist Weapons", "Map Specific Weapons", "Other Weapons"];
+	level.Assault = ["iw7_m4_zm", "iw7_sdfar_zm", "iw7_ar57_zm", "iw7_fmg_zm+akimbofmg_zm", "iw7_ake_zmr", "iw7_rvn_zm+meleervn", "iw7_vr_zm", "iw7_gauss_zm", "iw7_erad_zm"];
+	level.SMG = ["iw7_fhr_zm", "iw7_crb_zml+crblscope_camo", "iw7_ripper_zmr", "iw7_ump45_zml+ump45lscope_camo", "iw7_crdb_zm", "iw7_mp28_zm", "iw7_tacburst_zm+gltacburst"];
+	level.LMG = ["iw7_sdflmg_zm", "iw7_mauler_zm", "iw7_lmg03_zm", "iw7_minilmg_zm", "iw7_unsalmg_zm"];
+	level.Snipers = ["iw7_kbs_zm", "iw7_m8_zm", "iw7_cheytac_zmr", "iw7_m1_zm", "iw7_ba50cal_zm", "iw7_longshot_zm+longshotlscope_zm"];
+	level.Shotguns = ["iw7_devastator_zm", "iw7_sonic_zmr", "iw7_sdfshotty_zm+sdfshottyscope_camo", "iw7_spas_zmr", "iw7_mod2187_zm"];
+	level.Pistols = ["iw7_emc_zm", "iw7_nrg_zm", "iw7_g18_zmr", "iw7_revolver_zm", "iw7_udm45_zm+udm45scope", "iw7_mag_zm"];
+	level.Launchers = ["iw7_lockon_zm", "iw7_glprox_zm", "iw7_chargeshot_zm+chargeshotscope_camo"];
+	level.Classics = ["iw7_m1c_zm", "iw7_g18c_zm", "iw7_ump45c_zm", "iw7_spasc_zm", "iw7_arclassic_zm", "iw7_cheytacc_zm"];
+	level.Melee = ["iw7_axe_zm"];
+	level.Specials = ["iw7_atomizer_mp", "iw7_penetrationrail_mp+penetrationrailscope", "iw7_steeldragon_mp", "iw7_claw_mp", "iw7_blackholegun_mp+blackholegunscope"];
+	level.ARNames = ["NV4", "R3K", "KBAR-32", "Type-2", "Volk", "R-VN", "X-Con", "G-Rail", "Erad"];
+	level.SMGNames = ["FHR-40", "Karma-45", "RPR Evo", "HVR", "VPR", "Trencher", "Raijin-EMX"];
+	level.LMGNames = ["R.A.W.", "Mauler", "Titan", "Auger", "Atlas"];
+	level.SniperNames = ["KBS Longbow", "EBR-800", "Widowmaker", "DMR-1", "Trek-50", "Proteus"];
+	level.ShotgunNames = ["Reaver", "Banshee", "DCM-8", "Rack-9", "M.2187"];
+	level.PistolNames = ["EMC", "Oni", "Kendall 44", "Hailstorm", "UDM", "Stallion 44"];
+	level.LauncherNames = ["Spartan SA3", "Howitzer", "P-Law"];
+	level.ClassicNames = ["M1", "Hornet", "MacTav-45", "S-Ravage", "OSA", "TF-141"];
+	level.MeleeNames = ["Axe"];
+	level.SpecialNames = ["Eraser", "Ballista EM3", "Steel Dragon", "Claw", "Gravity Vortex Gun", "Arm-2 Akimbo", "Turdlet"];
+	level.SpacelandWeaps = ["iw7_forgefreeze_zm+forgefreezealtfire", "iw7_dischord_zm", "iw7_facemelter_zm", "iw7_headcutter_zm", "iw7_shredder_zm", "iw7_spaceland_wmd"];
+	level.SpacelandNames = ["Forge Freeze", "Dischord", "Face Melter", "Head Cutter", "Shredder", "NX 2.0"];
+	level.RaveWeaps = ["iw7_golf_club_mp", "iw7_spiked_bat_mp", "iw7_two_headed_axe_mp", "iw7_machete_mp", "iw7_harpoon1_zm", "iw7_harpoon2_zm", "iw7_harpoon3_zm+akimbo", "iw7_harpoon4_zm"];
+	level.RaveNames = ["Golf Club", "Spiked Bat", "2 Headed Axe", "Machete", "Harpoon Gun 1", "Harpoon Gun 2", "Harpoon Gun 3", "Harpoon Gun 4"];
+	level.ShaolinWeaps = ["iw7_katana_zm", "iw7_nunchucks_zm", "crane", "snake", "dragon", "tiger"];
+	level.ShaolinNames = ["Katana", "Nunchucks", "Crane Chi", "Snake Chi", "Dragon Chi", "Tiger Chi"];
+	level.AttackWeaps = ["iw7_cutie_zm"];
+	level.AttackNames = ["Modular Atomic Disintegrator"];
+	level.BeastWeaps = ["iw7_venomx_zm"];					 				
+	level.BeastNames = ["Venom-X"];
+	level.otherWeaps = ["iw7_fists_zm", "iw7_entangler_zm"];
+	level.OtherNames = ["Fists", "Entangler"];
 	level thread onPlayerConnect();
 }
 
@@ -832,7 +867,7 @@ drawText()
     self.menu["OPT"]["SUB_TITLE"] = self createText("objective", .75, "CENTER", "TOP", -340, 120, 10, 0, self.menuTitle, (1, 1, 1), true);
     self.menu["OPT"]["SUB_TITLE"] affectElement("alpha", .4, 1);
     
-    self.menu["OPT"]["OPTSize"] = self createText("objective", .75, "center", "TOP", -265, 120, 10, 0, self getCursor() + 1 + "/" + self.eMenu.size, (1, 1, 1), true);
+    self.menu["OPT"]["OPTSize"] = self createText("objective", .75, "center", "TOP", -270, 120, 10, 0, self getCursor() + 1 + "/" + self.eMenu.size, (1, 1, 1), true);
     self.menu["OPT"]["OPTSize"] affectElement("alpha",.4, 1);
     
     for(e=0;e<8;e++)
@@ -1370,6 +1405,110 @@ menuOptions()
                 self addOptSlider("Colour Presets", GetColoursSlider(), ::MenuPreSetCol, undefined, true, "Scroller");
                 self addToggleOpt("Rainbow Fade", ::MenuToggleRainbow, IsString(self.menuSetting["ScrollerGradRainbow"]), "Scroller");
             break;
+		case "Weapon Manipulation":
+            self addMenu("Weapon Manipulation", "Weapon Manipulation");
+                self addOpt("Weapon Selection", ::newMenu, "Weapon Selection");
+            break;
+        case "Weapon Selection":
+            self addMenu("Weapon Selection", "Weapon Selection");
+                for(e=0;e<level.WeaponCategories.size;e++)
+                self addOpt(level.WeaponCategories[e], ::newMenu, level.WeaponCategories[e] );
+            break;
+        case "Assault Rifles":
+            self addMenu(level.WeaponCategories[0], "Assault Rifles");
+				for(i=0;i<level.ARNames.size;i++){
+					self addOpt(level.ARNames[i], ::GiveWeaponToPlayer, level.Assault[i], self);
+				}
+            break;        
+        case "Sub Machine Guns":
+            self addMenu(level.WeaponCategories[1], "Sub Machine Guns");
+				for(i=0;i<level.SMGNames.size;i++){
+					self addOpt(level.SMGNames[i], ::GiveWeaponToPlayer, level.SMG[i], self);
+				}
+            break;
+        case "Shotguns":
+            self addMenu(level.WeaponCategories[4], "Shotguns");
+				for(i=0;i<level.ShotgunNames.size;i++){
+					self addOpt(level.ShotgunNames[i], ::GiveWeaponToPlayer, level.Shotguns[i], self);
+				}
+            break;
+        case "Light Machine Guns":
+            self addMenu(level.WeaponCategories[2], "Light Machine Guns");
+				for(i=0;i<level.LMGNames.size;i++){
+					self addOpt(level.LMGNames[i], ::GiveWeaponToPlayer, level.LMG[i], self);
+				}
+            break;
+        case "Sniper Rifles":
+            self addMenu(level.WeaponCategories[3], "Sniper Rifles");
+                for(i=0;i<level.SniperNames.size;i++){
+                    self addOpt( level.SniperNames[i], ::GiveWeaponToPlayer, level.Snipers[i], self ); 
+				}
+            break;
+        case "Launchers":
+            self addMenu(level.WeaponCategories[6], "Launchers");
+                for(i=0;i<level.LauncherNames.size;i++){
+                    self addOpt( level.LauncherNames[i], ::GiveWeaponToPlayer, level.Launchers[i], self ); 
+				}
+            break;
+        case "Pistols":
+            self addMenu(level.WeaponCategories[5], "Pistols");
+                for(i=0;i<level.PistolNames.size;i++){
+                    self addOpt( level.PistolNames[i], ::GiveWeaponToPlayer, level.Pistols[i], self );
+					}
+            break;
+		case "Classic Weapons":
+			self addMenu(level.WeaponCategories[7], "Classic Weapons");
+				for(i=0;i<level.ClassicNames.size;i++){
+					self addOpt(level.ClassicNames[i], ::GiveWeaponToPlayer, level.Classic[i], self);
+				}
+			break;
+		case "Melee Weapons":
+			self addMenu(level.WeaponCategories[8], "Melee Weapons");
+			for(i=0;i<level.MeleeNames.size;i++){
+				self addOpt(level.MeleeNames[i], ::GiveWeaponToPlayer, level.Melee[i], self);
+			}
+			break;
+		case "Specialist Weapons":
+			self addMenu(level.WeaponCategories[9], "Specialist Weapons");
+				for(i=0;i<level.SpecialNames.size;i++){
+					self addOpt(level.SpecialNames[i], ::GiveWeaponToPlayer, level.Specials[i], self);
+				}
+			break;
+		case "Map Specific Weapons":
+			self addMenu(level.WeaponCategories[10], "Map Specific Weapons");
+				if(level.mapName == "cp_zmb"){
+					for(i=0;i<level.SpacelandNames.size;i++){
+						self addOpt(level.SpacelandNames[i], ::GiveWeaponToPlayer, level.SpacelandWeaps[i], self);
+					}
+				}
+				else if(level.mapName == "cp_rave"){
+					for(i=0;i<level.RaveNames.size;i++){
+						self addOpt(level.RaveNames[i], ::GiveWeaponToPlayer, level.RaveWeaps[i], self);
+					}
+				}
+				else if(level.mapName == "cp_disco"){
+					for(i=0;i<level.ShaolinNames.size;i++){
+						self addOpt(level.ShaolinNames[i], ::GiveWeaponToPlayer, level.ShaolinWeaps[i], self);
+					}
+				}
+				else if(level.mapName == "cp_town"){
+					for(i=0;i<level.AttackNames.size;i++){
+						self addOpt(level.AttackNames[i], ::GiveWeaponToPlayer, level.AttackWeaps[i], self);
+					}
+				}
+				else if(level.mapName == "cp_final")
+				{
+					for(i=0;i<level.BeastNames.size;i++){
+						self addOpt(level.BeastNames[i], ::GiveWeaponToPlayer, level.BeastWeaps[i], self);
+					}
+				}
+			break;
+		case "Other Weapons":
+			self addMenu(level.WeaponCategories[11], "Other Weapons");
+				for(i=0;i<level.OtherNames.size;i++){
+					self addOpt(level.OtherNames[i], ::GiveWeaponToPlayer, level.otherWeaps[i], self);
+				}
+			break;
         case "AllAccess":
             self addMenu("AllAccess", "Verification Level");
                 for(e=0;e<level.Status.size-1;e++)
@@ -1378,6 +1517,7 @@ menuOptions()
         case "Host Debug":
             self addMenu("Host Debug", "Host Debug Settings");
                 self addOpt("Fast Restart", ::FastRestartGame);
+				self addOpt("Revive Arcade Folks", ::ReviveFromArcade);
             break;
         default:
             self ClientOptions();
@@ -1502,4 +1642,68 @@ ClientHandlerMain(func, client)
 		case 0: client thread Godmode(); break;
 		case 1: client thread ToggleAmmo(); break;
 	}
+}
+
+
+ReviveFromArcade()
+{
+	foreach(player in level.players){
+		player scripts\cp\zombies\zombie_afterlife_arcade::try_exit_afterlife_arcade(player);
+	}
+}
+
+GiveWeaponToPlayer(weapon, player) {
+	if(player getCurrentWeapon() != weapon && player getWeaponsListPrimaries()[1] != weapon && player getWeaponsListPrimaries()[2] != weapon && player getWeaponsListPrimaries()[3] != weapon&& player getWeaponsListPrimaries()[4] != weapon) {
+		if(player scripts\cp\utility::has_zombie_perk("perk_machine_more")) {
+			max_weapon_num = 4;
+		} else {
+			max_weapon_num = 3;
+		}
+		if(player getWeaponsListPrimaries().size >= max_weapon_num) {
+			player takeWeapon(player getCurrentWeapon());
+		}
+		
+		if(weapon == "iw7_spaceland_wmd" || weapon == "iw7_fists_zm" || weapon == "iw7_entangler_zm" || weapon == "iw7_atomizer_mp" || weapon == "iw7_penetrationrail_mp+penetrationrailscope" || weapon == "iw7_steeldragon_mp" || weapon == "iw7_claw_mp" || weapon == "iw7_blackholegun_mp+blackholegunscope" || weapon == "iw7_cutie_zm") {
+			player giveWeapon(weapon);
+			player switchToWeapon(weapon);
+			wait 1;
+			player setWeaponAmmoClip(player getCurrentWeapon(), 999);
+			player setWeaponAmmoClip(player getCurrentWeapon(), 999, "left");
+			player setWeaponAmmoClip(player getCurrentWeapon(), 999, "right");
+			
+		} else {
+			player giveWeapon(return_weapon_name_with_like_attachments(weapon));
+			player switchToWeapon(return_weapon_name_with_like_attachments(weapon));
+			wait 1;
+			player setWeaponAmmoClip(player getCurrentWeapon(), 999);
+			player setWeaponAmmoClip(player getCurrentWeapon(), 999, "left");
+			player setWeaponAmmoClip(player getCurrentWeapon(), 999, "right");
+		}
+	} else {
+		player switchToWeaponImmediate(return_weapon_name_with_like_attachments(weapon));
+		wait 1;
+		player setWeaponAmmoClip(player getCurrentWeapon(), 999);
+		player setWeaponAmmoClip(player getCurrentWeapon(), 999, "left");
+		player setWeaponAmmoClip(player getCurrentWeapon(), 999, "right");
+	}
+}
+
+build_custom_weapon(weapon, camo, extra_attachments) {
+	weapon_name = scripts\cp\utility::getrawbaseweaponname(weapon);
+	
+	if (isDefined(self.weapon_build_models[weapon_name])) {
+		weapon_model = self.weapon_build_models[weapon_name];
+		weapon_attachments = getweaponattachments(weapon_model);
+		weapon_build = scripts\engine\utility::array_combine(extra_attachments, weapon_attachments);
+		weapon_custom = self scripts\cp\cp_weapon::return_weapon_name_with_like_attachments(getweaponbasename(weapon), undefined, weapon_build, 1, camo);
+		return weapon_custom;
+	} else {
+		weapon_custom = scripts\engine\utility::array_combine(extra_attachments, weapon);
+		return weapon_custom;
+	}
+}
+
+take_weapon(weapon_name) {
+	self takeWeapon(self getCurrentWeapon());
+	self switchToWeapon(self getWeaponsListPrimaries()[1]);
 }
