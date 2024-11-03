@@ -1,6 +1,6 @@
 /*******************************************************************
  * Decompiled By: Bog
- * Decompiled File: 3418.gsc
+ * Decompiled File: zombies_gamescore.gsc //was 3418.gsc
  * Game: Call of Duty: Infinite Warfare
  * Platform: PC
  * Function Count: 29

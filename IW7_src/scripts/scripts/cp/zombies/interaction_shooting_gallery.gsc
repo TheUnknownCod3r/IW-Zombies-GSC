@@ -1,6 +1,6 @@
 /*******************************************************************
  * Decompiled By: Bog
- * Decompiled File: 3389.gsc
+ * Decompiled File: interaction_shooting_gallery.gsc //was 3389.gsc
  * Game: Call of Duty: Infinite Warfare
  * Platform: PC
  * Function Count: 75

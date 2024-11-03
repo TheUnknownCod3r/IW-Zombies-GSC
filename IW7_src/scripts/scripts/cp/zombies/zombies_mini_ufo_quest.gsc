@@ -1,6 +1,6 @@
 /*******************************************************************
  * Decompiled By: Bog
- * Decompiled File: 3420.gsc
+ * Decompiled File: zombies_mini_ufo_quest.gsc //was 3420.gsc
  * Game: Call of Duty: Infinite Warfare
  * Platform: PC
  * Function Count: 11

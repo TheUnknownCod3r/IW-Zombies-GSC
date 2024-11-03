@@ -1,6 +1,6 @@
 /*******************************************************************
  * Decompiled By: Bog
- * Decompiled File: 3417.gsc
+ * Decompiled File: zombies_consumables.gsc //was 3417.gsc
  * Game: Call of Duty: Infinite Warfare
  * Platform: PC
  * Function Count: 168

@@ -1,6 +1,6 @@
 /*******************************************************************
  * Decompiled By: Bog
- * Decompiled File: 3422.gsc
+ * Decompiled File: zombies_pillage.gsc //was 3422.gsc
  * Game: Call of Duty: Infinite Warfare
  * Platform: PC
  * Function Count: 47

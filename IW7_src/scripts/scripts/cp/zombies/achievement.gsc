@@ -1,6 +1,6 @@
 /*******************************************************************
  * Decompiled By: Bog
- * Decompiled File: 3370.gsc
+ * Decompiled File: achievement.gsc //was 3370.gsc
  * Game: Call of Duty: Infinite Warfare
  * Platform: PC
  * Function Count: 15

@@ -1,6 +1,6 @@
 /*******************************************************************
  * Decompiled By: Bog
- * Decompiled File: 3400.gsc
+ * Decompiled File: zombie_armor.gsc //was 3400.gsc
  * Game: Call of Duty: Infinite Warfare
  * Platform: PC
  * Function Count: 12
