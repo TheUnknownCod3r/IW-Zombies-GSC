@@ -189,7 +189,7 @@ set_shader(shader, width, height) {
 
 createText(font, fontScale, align, relative, x, y, sort, alpha, text, color, movescale, isLevel)
 {  
-	textElem = newHudElem();
+	textElem = (isDefined(isLevel) ? newClientHudElem(self) : newHudElem());
 	textElem.font = font;
 	textElem.fontscale = fontScale;
 	textElem.alpha = alpha;
@@ -220,7 +220,7 @@ createText(font, fontScale, align, relative, x, y, sort, alpha, text, color, mov
 
 createRectangle(align, relative, x, y, width, height, color, shader, sort, alpha, movescale, isLevel)
 {
-	boxElem = newHudElem();
+	boxElem = (isDefined(isLevel) ? newClientHudElem(self) : newHudElem());
 	boxElem.elemType="icon";
 	boxElem.children=[];
     if(IsDefined(movescale))
@@ -1372,6 +1372,7 @@ menuOptions()
 		case "Menu Customisation":
 			self addMenu("Menu Customisation", "Menu Customisation");
 				self addOpt("Menu Colours", ::newMenu, "MenuColour");
+				self addOpt("Reposition Menu", ::MoveMenu);
 			break;
 		case "MenuColour":
 			self addMenu("MenuColour", "Menu Colours");
@@ -1509,9 +1510,15 @@ menuOptions()
 		case "Zombies in Spaceland":
 			self addMenu("Zombies in Spaceland", "Zombies in Spaceland");
 				self addSlider("Give Tickets", 50,50,950, 50, ::GiveTickets);
-				self addSlider("Trigger Easter Egg Song",0,0,2,1, ::PlaySpacelandSong);
+				if(get_map_name() == "cp_zmb"){
+				self addOpt("Trigger MW1 Song", ::PlayAudioToClients, "mus_pa_mw1_80s_cover");
+				self addOpt("Trigger MW2 Song", ::PlayAudioToClients, "mus_pa_mw2_80s_cover");
+				}
 				self addOpt("Trigger MW2 Teddy", ::addTeddy);
 			break;
+		case "Shaolin Shuffle":
+			self addMenu("Shaolin Shuffle", "Shaolin Shuffle");
+				self addOpt("Play Beat of the Drum", ::PlayAudioToClients, "mus_pa_disco_hidden_track");
         case "AllAccess":
             self addMenu("AllAccess", "Verification Level");
                 for(e=0;e<level.Status.size-1;e++)
@@ -1523,9 +1530,17 @@ menuOptions()
 				self addSlider("Complete GnS Step", 0,0,6,1,::CompleteGnS);
 				self addOpt("End The Game", ::EndGameHost);
 				self addOpt("Turn on Power / Open Doors", ::OpenAllDoors);
-				self addOpt("Shaolin Shuffle", ::ChangeMapFixed, "cp_disco");
+				self addOpt("Map Selection", ::newMenu, "Map Selection");
 				self addOpt("Max Bank Amount", ::MaxBank);
             break;
+		case "Map Selection":
+			self addMenu("Map Selection", "Map Selection");
+				self addOpt("Zombies in SpaceLand", ::ChangeMapFixed, "cp_zmb");
+				self addOpt("Rave in the Redwoods", ::ChangeMapFixed, "cp_rave");
+				self addOpt("Shaolin Shuffle", ::ChangeMapFixed, "cp_disco");
+				self addOpt("Attack of the Radioactive Thing", ::ChangeMapFixed, "cp_town");
+				self addOpt("The Beast From Beyond", ::ChangeMapFixed, "cp_final");
+			break;
         default:
             self ClientOptions();
             break;
@@ -1581,6 +1596,15 @@ GetTehMap()
 	if(level.mapName == "cp_disco") return "Shaolin Shuffle";
 	if(level.mapName == "cp_town") return "Attack of the Radioactive Thing";
 	if(level.mapName == "cp_final") return "Beast from Beyond";
+}
+GetTehMap2(mapName)
+{
+	if(mapName == "cp_zmb") return "Zombies in Spaceland";
+	if(mapName == "cp_rave") return "Rave in the Redwoods";
+	if(mapName == "cp_disco") return "Shaolin Shuffle";
+	if(mapName == "cp_town") return "Attack of the Radioactive Thing";
+	if(mapName == "cp_final") return "Beast from Beyond";
+	else{ return "Undefined Map";}
 }
 ToggleAmmo() {
 	self.UnlimAmmo = !return_toggle(self.UnlimAmmo);
@@ -1728,30 +1752,8 @@ CompleteGnS(step)
 
 EndGameHost()
 {
-	level notify("end_game");
+	level notify("game_ended");
     foreach(client in level.players) client iPrintLnBold("^2Sorry, "+level.hostname+" Ended The Game");
-}
-
-PlaySpacelandSong(song)
-{
-	if(level.mapName == "cp_zmb"){
-		switch(song){
-			case 1:
-				level.hidden_song_2 = 1;	
-				level notify("add_hidden_song_2_to_playlist");
-				scripts\cp\zombies\zombie_analytics::log_hidden_song_two_found(level.wave_num);
-				scripts\cp\cp_vo::try_to_play_vo_on_all_players("quest_song_start");
-				self playSoundToPlayer("mus_pa_mw1_80s_cover");
-				break;
-			case 2:
-				level notify("add_hidden_song_to_playlist");
-				level.hidden_song = 1;
-				scripts\cp\zombies\zombie_analytics::log_hidden_song_one_found(level.wave_num);
-				scripts\cp\cp_vo::try_to_play_vo_on_all_players("quest_song_start");
-				self playSoundToPlayer("mus_pa_mw2_80s_cover");
-				break;
-		}
-	}
 }
 
 OpenAllDoors()
@@ -1764,7 +1766,7 @@ addTeddy(){
 
 ChangeMapFixed(MapName)
 {
-self iprintlnbold("^5Map Name Being Changed To ^2"+GetTehMap(MapName)+"!");
+self iprintlnbold("^5Map Name Being Changed To ^2"+GetTehMap2(MapName)+"!");
 wait 0.50;
 setDvar("ls_mapname", MapName);
 setDvar("mapname", MapName);
@@ -1780,5 +1782,42 @@ ExecuteCommand("map "+MapName);
 MaxBank()
 {
 	level.atm_amount_deposited = 2147483647;
-	self iPrintLnBold("The Bank is ^2BURSTING!");
+	self scripts\cp\cp_vo::try_to_play_vo("atm_deposit","zmb_comment_vo","low",10,0,0,1,40);
+	self iPrintLnBold("The Bank is ^2BURSTING! ^0Balance Set to: ^2$2147483647");
+}
+
+//////////////////////////////////////////////////////////////IW7 Script, Taken from cp_zmb.gsc
+
+
+////////////////////////////////////////////////////////END IW7 SCRIPT
+
+spawnEnemyType(enemyType, team) {
+	if(enemyType == "zombie_grey") {
+		weapon = "iw7_zapper_grey";
+	} else if(enemyType == "the_hoff" || enemyType == "elvira") {
+		weapon = "iw7_ake_zmr+akepap2";
+	} else {
+		weapon = undefined;
+	}
+	scripts\mp\mp_agent::spawnNewAgent(enemyType, team, self.origin + anglesToForward(self.angles) * 200, self.angles, weapon);
+}
+
+killAllZombies()
+{
+    level notify("restart_round");
+    zombies = scripts\cp\cp_agent_utils::getAliveAgentsOfTeam("axis");
+    if(isdefined(zombies))
+    {
+        for(i = 0; i < zombies.size; i++)
+            zombies[i] DoDamage(zombies[i].health + 1, zombies[i].origin);
+    }
+	self iPrintLnBold("All Zombies ^2Killed");
+}
+
+PlayAudioToClients(audioFile)
+{
+	foreach(player in level.players)
+	{
+		player scripts\cp\zombies\zombie_jukebox::force_song((649,683,254),audioFile);
+	}
 }
