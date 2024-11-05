@@ -1539,12 +1539,11 @@ menuOptions()
         case "Host Debug":
             self addMenu("Host Debug", "Host Debug Settings");
                 self addOpt("Fast Restart", ::FastRestartGame);
-				self addSlider("Complete GnS Step", 0,0,6,1,::CompleteGnS);
 				self addOpt("End The Game", ::EndGameHost);
 				self addOpt("Turn on Power / Open Doors", ::OpenAllDoors);
 				self addOpt("Map Selection", ::newMenu, "Map Selection");
 				self addOpt("Max Bank Amount", ::MaxBank);
-				self addOpt("Activate Reanimated", ::ActivateFAF, "self_revive", self);
+				self addOpt("Activate Reanimated", ::ActivateFAF, "self_revive", self);//currently doesn't work, looking into it
             break;
 		case "Map Selection":
 			self addMenu("Map Selection", "Map Selection");
@@ -1758,11 +1757,6 @@ GiveTickets(Amount)
 	self iPrintLnBold("Awarded ^1"+amount+" Tickets");
 }
 
-CompleteGnS(step)
-{
-	scripts\cp\maps\cp_zmb\cp_zmb_ghost_wave::notify_activation_progress(step);
-}
-
 EndGameHost()
 {
 	level notify("game_ended");
@@ -1837,7 +1831,7 @@ PlayAudioToClients(audioFile)
 
 FillFAF()
 {
-	self setclientomnvar("zm_dpad_up_fill",self.consumable_meter_max);
+	self setclientomnvar("zm_dpad_up_fill",100);
 }
 
 ActivateFAF(card,player)
