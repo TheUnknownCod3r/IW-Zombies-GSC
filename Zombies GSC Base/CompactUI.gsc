@@ -1406,6 +1406,7 @@ menuOptions()
 		case "Weapon Manipulation":
             self addMenu("Weapon Manipulation", "Weapon Manipulation");
                 self addOpt("Weapon Selection", ::newMenu, "Weapon Selection");
+				self addOpt("Fill Fate and Fortune", ::FillFAF);
             break;
         case "Weapon Selection":
             self addMenu("Weapon Selection", "Weapon Selection");
@@ -1516,9 +1517,20 @@ menuOptions()
 				}
 				self addOpt("Trigger MW2 Teddy", ::addTeddy);
 			break;
+		case "Rave in the Redwoods":
+			self addMenu("Rave in the Redwoods", "Rave in the Redwoods");
+				self addOpt("Play Puppet Strings", ::PlayAudioToClients, "mus_pa_rave_hidden_track");
+			break;
 		case "Shaolin Shuffle":
 			self addMenu("Shaolin Shuffle", "Shaolin Shuffle");
 				self addOpt("Play Beat of the Drum", ::PlayAudioToClients, "mus_pa_disco_hidden_track");
+			break;
+
+		case "Attack of the Radioactive Thing":
+			self addMenu("Attack of the Radioactive Thing", "Attack of the Radioactive Thing");
+				self addOpt("Play Brackyura boogie", ::PlayAudioToClients, "mus_pa_town_hidden_track");
+				self addSlider("Complete EE Step", 0,0,12,1,::AttackEESteps);
+			break;
         case "AllAccess":
             self addMenu("AllAccess", "Verification Level");
                 for(e=0;e<level.Status.size-1;e++)
@@ -1532,6 +1544,7 @@ menuOptions()
 				self addOpt("Turn on Power / Open Doors", ::OpenAllDoors);
 				self addOpt("Map Selection", ::newMenu, "Map Selection");
 				self addOpt("Max Bank Amount", ::MaxBank);
+				self addOpt("Activate Reanimated", ::ActivateFAF, "self_revive", self);
             break;
 		case "Map Selection":
 			self addMenu("Map Selection", "Map Selection");
@@ -1820,4 +1833,205 @@ PlayAudioToClients(audioFile)
 	{
 		player scripts\cp\zombies\zombie_jukebox::force_song((649,683,254),audioFile);
 	}
+}
+
+FillFAF()
+{
+	self setclientomnvar("zm_dpad_up_fill",self.consumable_meter_max);
+}
+
+ActivateFAF(card,player)
+{
+	if(card == "irish_luck") 
+	{
+		scripts\cp\zombies\zombies_consumables::consumable_activate_internal(999,"zm_card"+card+1+"_drain","zm_dpad_up_uses","zm_dpad_up_activated", "slot_"+card+1+"_used",card,player);
+		return;
+	}
+	scripts\cp\zombies\zombies_consumables::consumable_activate_internal(999,"zm_card"+card+1+"_drain","zm_dpad_up_uses","zm_dpad_up_activated", "slot_" + card + 1 + "_used",card,player);
+}
+
+AttackEESteps(step)
+{
+	switch(step)
+	{
+		case 1:
+			foreach(bodypart in level.mpq_zom_body_parts)
+			{
+				set_quest_omnvar_by_targetname(bodypart);
+				bodypart hide();
+				wait(0.1);
+			}
+
+			level.leg_knocked_down = 1;
+			var_03 = getent("mpq_zom_l_leg_part_ground","targetname");
+			if(isdefined(var_03))
+			{
+				var_03 hide();
+			}
+
+			foreach(var_05, var_01 in level.mpq_zom_parts)
+			{
+				if(!isdefined(var_01.fx_ent))
+				{
+					level thread glow_bed_part(var_05,var_01);
+				}
+
+				var_01 show();
+				wait(0.1);
+			}
+
+			level.mpq_zom_parts_picked_up["head"] = 1;
+			level.mpq_zom_parts_picked_up["torso"] = 1;
+			level.mpq_zom_parts_picked_up["left_arm"] = 1;
+			level.mpq_zom_parts_picked_up["right_arm"] = 1;
+			level.mpq_zom_parts_picked_up["left_leg"] = 1;
+			level.mpq_zom_parts_picked_up["right_leg"] = 1;
+			level.mpq_zom_parts_index = level.mpq_zom_parts_picked_up.size;
+			break;
+		case 2:
+			punchCard = getent("mpq_punch_card","targetname");
+			punchCard hide();
+			set_quest_omnvar_by_targetname("mpq_punch_card");
+			level.punch_card_acquired = 1;
+			break;
+		case 3:
+			var_00 = getent("elvira_mirror","targetname");
+			var_00 hide();
+			level.mirrors_picked_up["elvira_mirror"] = 1;
+			set_quest_omnvar_by_targetname(var_00);
+			var_00 = getent("car_mirror","targetname");
+			var_00 hide();
+			var_00 = getent("car_mirror_ground","targetname");
+			var_00 hide();
+			level.mirrors_picked_up["car_mirror_ground"] = 1;
+			set_quest_omnvar_by_targetname(var_00);
+			var_00 = getent("bathroom_mirror_piece","targetname");
+			var_00 hide();
+			level.mirrors_picked_up["bathroom_mirror_piece"] = 1;
+			set_quest_omnvar_by_targetname(var_00);
+			var_01 = scripts\engine\utility::getstructarray("mirror_placement","script_noteworthy");
+			foreach(var_03 in var_01)
+			{
+				var_04 = scripts\engine\utility::getstruct(var_03.target,"targetname");
+				var_00 = spawn("script_model",var_04.origin);
+				var_00.angles = var_04.angles;
+				var_00 setmodel(var_04.script_noteworthy);
+			}
+
+			level.mirrors_placed["car_mirror"] = 1;
+			level.mirrors_placed["bathroom_mirror"] = 1;
+			level.mirrors_placed["elvira_mirror"] = 1;
+			break;
+		case 4:
+			foreach(var_01 in level.mpq_zom_parts)
+			{
+				var_01 hide();
+			}
+
+			level.knife_throw_target_body show();
+			level.body_made = 1;
+			level.terminal_unlocked = 1;
+			break;
+		case 5: level.polarity_reversed = 1; break;
+		case 6: level.knife_throw_target_body hide();
+				spawn_garage_key(level.knife_throw_target_body.origin);
+				level.key_spawned = 1;
+				break;
+	}
+}
+
+set_quest_omnvar_by_targetname(param_00)//required for Attack EE Step
+{
+	var_01 = 0;
+	switch(param_00.var_336)
+	{
+		case "mpq_zom_head_part":
+			var_01 = 1;
+			break;
+
+		case "mpq_zom_torso_part":
+			var_01 = 6;
+			break;
+
+		case "mpq_zom_l_arm_part":
+			var_01 = 2;
+			break;
+
+		case "mpq_zom_r_arm_part":
+			var_01 = 3;
+			break;
+
+		case "mpq_zom_l_leg_part":
+			var_01 = 4;
+			break;
+
+		case "mpq_zom_r_leg_part":
+			var_01 = 5;
+			break;
+
+		case "mpq_punch_card":
+			var_01 = 10;
+			break;
+
+		case "car_mirror_ground":
+		case "mirror":
+			var_01 = 7;
+			break;
+
+		case "elvira_mirror":
+			var_01 = 8;
+			break;
+
+		case "bathroom_mirror_piece":
+			var_01 = 9;
+			break;
+	}
+
+	if(var_01 > 0)
+	{
+		scripts\cp\utility::set_quest_icon(var_01);
+	}
+}
+
+glow_bed_part(param_00,param_01)//Required for Attack EE
+{
+	param_01.fx_ent = spawn("script_model",param_01.origin);
+	switch(param_00)
+	{
+		case "torso":
+			param_01.fx_ent.origin = param_01.fx_ent.origin + (17,-17,50);
+			param_01.fx_ent_2 = spawn("script_model",param_01.origin);
+			param_01.fx_ent_2.origin = param_01.fx_ent_2.origin + (12,-12,35);
+			param_01.fx_ent_2 setmodel("tag_origin_limb_glow_fx");
+			break;
+
+		case "head":
+			param_01.fx_ent.origin = param_01.fx_ent.origin + (2,-2,15);
+			break;
+
+		case "left_arm":
+			param_01.fx_ent.origin = param_01.fx_ent.origin + (-9,-9,3);
+			break;
+
+		case "right_arm":
+			param_01.fx_ent.origin = param_01.fx_ent.origin + (8,8,6);
+			break;
+
+		case "left_leg":
+			param_01.fx_ent.origin = param_01.fx_ent.origin + (-17,-5,-5);
+			break;
+
+		case "right_leg":
+			param_01.fx_ent.origin = param_01.fx_ent.origin + (-5,10,-5);
+			break;
+	}
+
+	param_01.fx_ent setmodel("tag_origin_limb_glow_fx");
+}
+
+spawn_garage_key(param_00)//Required for Attack EE
+{
+	level.key_fx = spawnfx(level._effect["locker_key"],param_00 + (0,0,32));
+	wait(0.2);
+	triggerfx(level.key_fx);
 }
